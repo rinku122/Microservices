@@ -1,0 +1,54 @@
+http:
+  port: 8081
+admin:
+  port: 9876
+  host: localhost
+apiEndpoints:
+  api:
+    host: localhost
+    paths: "/ip"
+  posts:
+    paths: ["/posts", "/posts/*"]
+  users:
+    paths: ["/users", "/users/*"]
+serviceEndpoints:
+  httpbin:
+    url: "https://httpbin.org"
+  postsService:
+    url: "http://localhost:3001"
+  usersService:
+    url: "http://localhost:3002"
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  default:
+    apiEndpoints:
+      - api
+    policies:
+      # Uncomment `key-auth:` when instructed to in the Getting Started guide.
+      # - key-auth:
+      - proxy:
+          - action:
+              serviceEndpoint: httpbin
+              changeOrigin: true
+  postsPipeline:
+    apiEndpoints:
+      - posts
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: postsService
+  usersPipeline:
+    apiEndpoints:
+      - users
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: usersService

@@ -1,0 +1,20 @@
+version: "2"
+services:
+  users_s:
+    ports:
+      - "0.0.0.0:3002:3002"
+    container_name: users_c
+    restart: always
+    build: ./users/
+    env_file: ./config/users.env
+    environment:
+      - NODE_ENV=stage
+  posts_s:
+    ports:
+      - "0.0.0.0:3001:3001"
+    container_name: posts_c
+    restart: always
+    build: ./posts/
+    env_file: ./config/posts.env
+    environment:
+      - NODE_ENV=stage

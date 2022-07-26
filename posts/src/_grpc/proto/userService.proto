@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+message EmailRequest {
+    string email = 1;
+}
+
+message EmailResponse {
+    bool error = 1;
+    string message = 2;
+    string data = 3;
+}
+
+
+
+
+service UserService {
+    rpc getEmail (EmailRequest) returns (EmailResponse) {};
+    
+}
+
+
