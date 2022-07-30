@@ -1,20 +1,41 @@
-version: "2"
+version: "2.2"
 services:
-  users_s:
+  rabbitui:
+    container_name: con_rabbit
     ports:
-      - "0.0.0.0:3002:3002"
-    container_name: users_c
+    
+      - "0.0.0.0:15672:15672"
+      - "0.0.0.0:5672:5672"
+    image: rabbitmq:3-management
     restart: always
-    build: ./users/
-    env_file: ./config/users.env
-    environment:
-      - NODE_ENV=stage
-  posts_s:
-    ports:
-      - "0.0.0.0:3001:3001"
-    container_name: posts_c
-    restart: always
-    build: ./posts/
-    env_file: ./config/posts.env
-    environment:
-      - NODE_ENV=stage
+    volumes:
+      - "/data/dvolumes/spot-trade/dockerrabbit:/var/lib/rabbitmq"
+    networks:
+      - my_network
+networks:
+  my_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      config:
+        - subnet: 30.10.11.0/16
+          gateway: 30.10.11.1      
+  # users_s:
+  #   ports:
+  #     - "0.0.0.0:3002:3002"
+  #   container_name: users_c
+  #   restart: always
+  #   build: ./users/
+  #   env_file: ./config/users.env
+  #   environment:
+  #     - NODE_ENV=stage
+  # posts_s:
+  #   ports:
+  #     - "0.0.0.0:3001:3001"
+  #   container_name: posts_c
+  #   restart: always
+  #   build: ./posts/
+  #   env_file: ./config/posts.env
+  #   environment:
+  #     - NODE_ENV=stage            

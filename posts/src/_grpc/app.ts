@@ -6,6 +6,7 @@ import {
   ServerCredentials,
 } from "@grpc/grpc-js";
 import path from "path";
+import { Posts } from "../models/schema";
 
 const PROTO_PATH = path.join(__dirname, "./proto/postService.proto");
 
@@ -38,12 +39,29 @@ class Grpc {
     const proto = loadPackageDefinition(grpcPackageDefination) as ServerPackage;
     const server = new Server();
 
+    server.addService(proto.PostService.service, {
+      getPosts: async (call: any, callback: any) => {
+        const email = call.request;
+        let collectionResponse: any;
+        let posts: any = await Posts.find(email);
+        collectionResponse = {
+          error: false,
+          message: "Posts fetched successfully.",
+          posts: posts,
+        };
+
+        callback(null, collectionResponse);
+      },
+    });
+
     server.bindAsync(
       `${host}:${port}`,
       ServerCredentials.createInsecure(),
       (error: any) => {
         if (error) return console.log("GRPC:: Failed To Connect..!!");
-        console.log(`GRPC has been started on - ${host}:${port}`.black.bg_white);
+        console.log(
+          `GRPC has been started on - ${host}:${port}`.black.bg_white
+        );
         server.start();
       }
     );

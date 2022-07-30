@@ -9,9 +9,10 @@ class UserSchema extends Schema {
 
   private schema() {
     this.objectSchema = new Schema({
-      email: { type: String, unique: true, required: true },
+      email: {  type: String, trim: true, index: true, required: true,unique:true  },
       name: { type: String, required: true },
       age: { type: Number, required: true },
+      postCount: { type: Number, default: 0 },
     });
   }
 }

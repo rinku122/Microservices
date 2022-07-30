@@ -1,22 +1,18 @@
 import { Posts } from "../../models/schema";
 import * as Interfaces from "../../helpers/interfaces";
-import express from "express";
-import ErrorResponse from "../../helpers/error";
 
 class PostModel {
   constructor() {}
 
-  public async savePostDetails(
-    data: Interfaces.Post,
-    next: express.NextFunction
-  ): Promise<any> {
-    const email = await Posts.findOne({ email: data.email });
-    // if (!email) {
-    //   return next(new ErrorResponse("User is not logged in"));
-    // }
-    const post = new Posts(data);
-    await post.save();
-    return post;
+  public async _savePostDetails(post: Interfaces.Post): Promise<any> {
+    const _post = new Posts(post);
+    await _post.save();
+    console.log("Post is created");
+  }
+
+  public async getPostCount(email: string): Promise<any> {
+    const count = await Posts.find({ email }).count();
+    return count;
   }
 }
 

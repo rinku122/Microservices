@@ -2,10 +2,11 @@ import { Request, Router } from "express";
 import express from "express";
 import ErrorResponse from "../../helpers/error";
 import { GrpcClient } from "./../../helpers";
-import PostModel from "./post.model";
 import { asyncHandler, response } from "../../middlewares";
 import * as Interfaces from "../../helpers/interfaces";
 import { Response } from "../../helpers";
+import QueService from "../../queServices/que.service";
+import PostModel from "./post.model";
 
 class PostController implements Interfaces.Controller {
   public path = "/posts";
@@ -32,12 +33,22 @@ class PostController implements Interfaces.Controller {
       if (response.error) {
         return next(new ErrorResponse("User not registered", 400));
       } else {
-        const data = await PostModel.savePostDetails(req.body, next);
-        res.response = new Response(200, data, null);
+        const post: Interfaces.Post = req.body;
+        const count = await PostModel.getPostCount(req.body.email);
+        const postdetails = { count, email: req.body.email };
+        await QueService.createPostQue(post, postdetails);
+        res.response = new Response(
+          200,
+          "Post has been added Successfully..!!",
+          {},
+          {}
+        );
       }
 
       next();
     }
+
+    
   );
 }
 

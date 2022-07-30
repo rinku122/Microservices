@@ -17,7 +17,8 @@ class UserController implements Interfaces.Controller {
   public async initializeRoutes() {
     this.router
       .all(`${this.path}/*`)
-      .post(this.path + "/saveUser", this.saveUser, response);
+      .post(this.path + "/saveUser", this.saveUser, response)
+      .post(this.path + "/getUser", this.getUserPost, response);
   }
 
   public saveUser = asyncHandler(
@@ -26,7 +27,19 @@ class UserController implements Interfaces.Controller {
       res: any,
       next: express.NextFunction
     ): Promise<any> => {
-      const data = await UserModel.saveUserDetails(req.body);
+      const data = await UserModel.saveUserDetails(req.body, next);
+      res.response = new Response(200, data, null);
+      next();
+    }
+  );
+
+  public getUserPost = asyncHandler(
+    async (
+      req: Request,
+      res: any,
+      next: express.NextFunction
+    ): Promise<any> => {
+      const data = await UserModel.getUserPost(req.body, next);
       res.response = new Response(200, data, null);
       next();
     }
