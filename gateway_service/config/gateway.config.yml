@@ -15,9 +15,9 @@ serviceEndpoints:
   httpbin:
     url: "https://httpbin.org"
   postsService:
-    url: "http://localhost:3001"
+    url: "http://20.10.11.3:3001"
   usersService:
-    url: "http://localhost:3002"
+    url: "http://20.10.11.4:3002"
 policies:
   - basic-auth
   - cors
