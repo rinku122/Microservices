@@ -1,5 +1,14 @@
 version: "2.2"
 services:
+  redis:
+    container_name: con_redis
+    ports:
+      - "0.0.0.0:6379:6379"
+    volumes:
+      - "/data/dvolumes/microservices/docker-redis:/data"
+    image: redis
+    networks:
+      - my_network
   rabbitui:
     container_name: con_rabbit
     ports:
@@ -12,39 +21,39 @@ services:
       - "/data/dvolumes/microservices/dockerrabbit:/var/lib/rabbitmq"
     networks:
       - my_network
-  users_s:
-    ports:
-      - "0.0.0.0:3002:3002"
-    container_name: users_c
-    restart: always
-    build: ./users/
-    env_file: ./config/users.env
-    environment:
-      - NODE_ENV=stage
-    networks:
-      my_network:
-        ipv4_address: 20.10.11.4  
-  posts_s:
-    ports:
-      - "0.0.0.0:3001:3001"
-    container_name: posts_c
-    restart: always
-    build: ./posts/
-    env_file: ./config/posts.env
-    environment:
-      - NODE_ENV=stage 
-    networks:
-      my_network:
-        ipv4_address: 20.10.11.3
-  gateway_s:
-    ports:
-      - "0.0.0.0:8081:8081"
-    container_name: gateway_c
-    restart: always
-    build: ./gateway_service/  
-    networks:
-      my_network:
-        ipv4_address: 20.10.11.2    
+  # users_s:
+  #   ports:
+  #     - "0.0.0.0:3002:3002"
+  #   container_name: users_c
+  #   restart: always
+  #   build: ./users/
+  #   env_file: ./config/users.env
+  #   environment:
+  #     - NODE_ENV=stage
+  #   networks:
+  #     my_network:
+  #       ipv4_address: 20.10.11.4  
+  # posts_s:
+  #   ports:
+  #     - "0.0.0.0:3001:3001"
+  #   container_name: posts_c
+  #   restart: always
+  #   build: ./posts/
+  #   env_file: ./config/posts.env
+  #   environment:
+  #     - NODE_ENV=stage 
+  #   networks:
+  #     my_network:
+  #       ipv4_address: 20.10.11.3
+  # gateway_s:
+  #   ports:
+  #     - "0.0.0.0:8081:8081"
+  #   container_name: gateway_c
+  #   restart: always
+  #   build: ./gateway_service/  
+  #   networks:
+  #     my_network:
+  #       ipv4_address: 20.10.11.2    
 networks:
   my_network:
     driver: bridge

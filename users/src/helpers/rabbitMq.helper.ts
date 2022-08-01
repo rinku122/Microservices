@@ -30,31 +30,44 @@ class RabbitMq {
   }
 
   private async initQue() {
-    const { INCREASE_USER_COUNT } = RabbitMqContants;
+    const { INCREASE_USER_COUNT, ADD_IN_REDIS } = RabbitMqContants;
+    this.assertQue(ADD_IN_REDIS);
     this.consumeQue(INCREASE_USER_COUNT);
+    this.consumeQue(ADD_IN_REDIS);
   }
 
   private async consumeQue(que: string) {
-    const { INCREASE_USER_COUNT } = RabbitMqContants;
+    const { INCREASE_USER_COUNT, ADD_IN_REDIS } = RabbitMqContants;
     this.channel.consume(
       que,
       async (msg: any) => {
         const data = JSON.parse(msg.content.toString());
 
-        let { email, count } = data;
-        count = Number(count);
-        console.log(data);
         console.log(`Consume::${que} => ${JSON.stringify(data)}`);
 
         switch (que) {
           case INCREASE_USER_COUNT:
+            let { email, count } = data;
+            count = Number(count);
             QueService.consumePostQue(email, count);
             this.channel.ack(msg);
             break;
+          case ADD_IN_REDIS:
+            QueService.consumeUserInRedisQue(data);
         }
       },
       { noAck: false }
     );
+  }
+
+  public async createQue(que: string, data: any) {
+    data = JSON.stringify(data);
+    this.channel.sendToQueue(que, Buffer.from(data));
+    console.log("info", `Creating::${que} => ${JSON.stringify(data)}`);
+  }
+
+  public async assertQue(que: string) {
+    this.channel.assertQueue(que);
   }
 }
 
