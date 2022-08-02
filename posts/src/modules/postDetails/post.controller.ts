@@ -31,6 +31,7 @@ class PostController implements Interfaces.Controller {
       const { email } = req.body;
       const response = await GrpcClient.getUserEmail({ email });
       if (response.error) {
+        
         return next(new ErrorResponse("User not registered", 400));
       } else {
         const post: Interfaces.Post = req.body;
